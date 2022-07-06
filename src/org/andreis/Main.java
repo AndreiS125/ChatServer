@@ -30,13 +30,17 @@ public class Main {
         }
         new Thread(() -> {
             Scanner scan = new Scanner(System.in);
-            String msg = scan.nextLine();
-            try {
-                out.writeUTF(msg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while (true) {
+
+                String msg = scan.nextLine();
+                System.out.println("SENDED MESSAGE");
+                try {
+                    out.writeUTF(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        }).start();
 
     }
 }
