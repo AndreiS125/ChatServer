@@ -40,7 +40,7 @@ public class ClientHandler {
         while (true) {
             String str = in.readUTF();
             if (str.startsWith("/auth")) {
-                String[] parts = str.split("\\s");
+                String[] parts = str.split(" ");
                 String nick =
                         myServer.getAuthService().getNickByLoginPass(parts[1], parts[2]);
                 if (nick != null) {
@@ -80,7 +80,9 @@ public class ClientHandler {
     }
     public void sendMsg(String msg) {
         try {
+
             out.writeUTF(msg);
+            System.out.println("Отправлено сообщение: "+msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
