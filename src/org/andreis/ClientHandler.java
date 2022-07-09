@@ -5,12 +5,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler {
     private MyServer myServer;
     private Socket socket;
-    private DataInputStream in;
-    private DataOutputStream out;
+    public DataInputStream in;
+    public DataOutputStream out;
     private String name;
     public String getName() {
         return name;
@@ -66,7 +67,7 @@ public class ClientHandler {
             if (strFromClient.equals("/end")) {
                 return;
             }
-            if (strFromClient.equals("/w")) {
+            if (strFromClient.startsWith("/w")) {
                 String[] command = strFromClient.split(" ");
                 String msg="";
                 for(int i=2;i<command.length;i++){
@@ -75,13 +76,16 @@ public class ClientHandler {
                 myServer.getUserByNick(command[1]).sendMsg(msg);
 
             }
-            myServer.broadcastMsg(name + ": " + strFromClient);
+            else {
+                myServer.broadcastMsg(name + ": " + strFromClient);
+            }
         }
     }
-    public void sendMsg(String msg) {
+    public void  sendMsg(String msg) {
         try {
 
             out.writeUTF(msg);
+
             System.out.println("Отправлено сообщение: "+msg);
         } catch (IOException e) {
             e.printStackTrace();
