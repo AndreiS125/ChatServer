@@ -58,6 +58,24 @@ public class ClientHandler {
                     sendMsg("Неверные логин/пароль");
                 }
             }
+            if (str.startsWith("/reg")) {
+                String[] parts = str.split(" ");
+                String nick =
+                        myServer.getAuthService().getNickByLoginPass(parts[1], parts[2]);
+                if (nick != null) {
+                    if (!myServer.isNickBusy(nick)) {
+                        sendMsg("/authok " + nick);
+                        name = nick;
+                        myServer.broadcastMsg(name + " зашел в чат");
+                        myServer.subscribe(this);
+                        return;
+                    } else {
+                        sendMsg("Учетная запись уже используется");
+                    }
+                } else {
+                    sendMsg("Неверные логин/пароль");
+                }
+            }
         }
     }
     public void readMessages() throws IOException {

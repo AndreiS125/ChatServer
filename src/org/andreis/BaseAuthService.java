@@ -1,5 +1,6 @@
 package org.andreis;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,37 +9,130 @@ public class BaseAuthService implements AuthService {
         private String login;
         private String pass;
         private String nick;
+
         public Entry(String login, String pass, String nick) {
             this.login = login;
             this.pass = pass;
             this.nick = nick;
         }
     }
+    private Connection connection;
+    private static Statement stmt;
     private List<Entry> entries;
     @Override
     public void start() {
         System.out.println("Сервис аутентификации запущен");
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:javadb.db");
+            stmt = connection.createStatement();
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (\n" +
+                    " name TEXT," +
+                    " login TEXT," +
+                    " password TEXT" +
+                    " );");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS chats (\n" +
+                    " name TEXT," +
+                    " users TEXT," +
+                    " );");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS messages (\n" +
+                    " text TEXT," +
+                    " chatname TEXT," +
+                    " whotosend TEXT" +
+                    " );");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void stop() {
         System.out.println("Сервис аутентификации остановлен");
+        try {
+            stmt.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     public BaseAuthService() {
-        entries = new ArrayList<>();
-        entries.add(new Entry("l1", "p1", "Andrei"));
-        entries.add(new Entry("l2", "p2", "Daun"));
-        entries.add(new Entry("login3", "pass3", "nick3"));
+        try {
+            stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('Andrei', 'Andrei', 'p1',)");
+            stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('Someone', 'l1', 'p1',)");
+            stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('User', 'l2', 'p1',)");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
     }
     @Override
     public String getNickByLoginPass(String login, String pass) {
         System.out.println("Поиск пользователя...");
-        for (Entry o : entries) {
-            if (o.login.equals(login) && o.pass.equals(pass)) {
-                System.out.println("Пользователь найден...");
-                return o.nick;
-            }
-        }
 
-        return null;
+
+        return get(login,pass);
     }
+    public void add(String name, String owner, String pos1, String pos2, String friends) {
+        try {
+
+
+            stmt.executeUpdate("INSERT INTO regions VALUES ('" + name +"', '"+owner+ "', '"+pos1+"', '"+pos2+"', '"+friends+"')");
+
+
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String get(String login, String pass) {
+        try {
+
+
+            ResultSet resultSet = stmt.executeQuery("Select * from regions WHERE login = '"+login+"' and password = '"+pass+"'");
+            String answ=resultSet.getString("name");
+
+
+            return answ;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+
+
+    public void remove(String name) {
+        try {
+
+
+            stmt.executeUpdate("DELETE FROM regions WHERE name = '" + name + "'");
+
+
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(String what, String namewho, String namerg) {
+        try {
+
+
+            String st="";
+            if(what.equals("friends")){
+                st=String.format("UPDATE %s SET %s = '%s' WHERE %s = '%s'",namewho+":", namerg);
+            }
+            stmt.executeUpdate(st);
+
+
+        }
+        catch(Exception e) {
+
+        }
+    }
+
 }
+

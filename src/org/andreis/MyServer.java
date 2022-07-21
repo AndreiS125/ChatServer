@@ -71,9 +71,11 @@ public class MyServer {
             sb.append(o.getName() + " ");
         }
         broadcastMsg(sb.toString());
+        System.out.println("Забродкастил");
     }
     public synchronized void unsubscribe(ClientHandler o) {
         clients.remove(o);
+
         broadcastClientsList();
     }
     public synchronized void subscribe(ClientHandler o) {
