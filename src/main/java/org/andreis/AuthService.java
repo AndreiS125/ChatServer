@@ -9,4 +9,6 @@ public interface AuthService {
     String getNickByLoginPass(String login, String pass);
 
     void stop();
+    void add(String name, String login, String pass);
+
 }

@@ -61,19 +61,20 @@ public class ClientHandler {
             if (str.startsWith("/reg")) {
                 String[] parts = str.split(" ");
                 String nick =
-                        myServer.getAuthService().getNickByLoginPass(parts[1], parts[2]);
-                if (nick != null) {
+                        null;
+                if (nick == null) {
                     if (!myServer.isNickBusy(nick)) {
-                        sendMsg("/authok " + nick);
-                        name = nick;
+                        sendMsg("/authok " +parts[2]);
+                        myServer.getAuthService().add(parts[2],parts[1], parts[3]);
+                        name = parts[2];
                         myServer.broadcastMsg(name + " зашел в чат");
                         myServer.subscribe(this);
                         return;
                     } else {
-                        sendMsg("Учетная запись уже используется");
+                        sendMsg("Учетная запись уже зарегестрирована");
                     }
                 } else {
-                    sendMsg("Неверные логин/пароль");
+                    sendMsg("Вы уже зарегестрированы. Войдите в аккаунт");
                 }
             }
         }

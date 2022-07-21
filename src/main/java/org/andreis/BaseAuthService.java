@@ -56,7 +56,8 @@ public class BaseAuthService implements AuthService {
     }
     public BaseAuthService() {
         try {
-            stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('Andrei', 'Andrei', 'p1',)");
+            start();
+            stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('Andrei', 'Andrei', 'p1')");
             stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('Someone', 'l1', 'p1',)");
             stmt.executeUpdate("INSERT INTO users VALUES IF NOT EXISTS ('User', 'l2', 'p1',)");
 
@@ -73,12 +74,13 @@ public class BaseAuthService implements AuthService {
 
         return get(login,pass);
     }
-    public void add(String name, String owner, String pos1, String pos2, String friends) {
+    @Override
+    public void add(String name, String login, String pass) {
         try {
 
-
-            stmt.executeUpdate("INSERT INTO regions VALUES ('" + name +"', '"+owner+ "', '"+pos1+"', '"+pos2+"', '"+friends+"')");
-
+            stmt=connection.createStatement();
+            stmt.executeUpdate("INSERT INTO users VALUES ('" + name +"', '"+login+ "', '"+pass+"')");
+            stmt.close();
 
         }
         catch(Exception e) {
@@ -89,9 +91,10 @@ public class BaseAuthService implements AuthService {
     public String get(String login, String pass) {
         try {
 
-
-            ResultSet resultSet = stmt.executeQuery("Select * from regions WHERE login = '"+login+"' and password = '"+pass+"'");
+            stmt=connection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("Select * from users WHERE login = '"+login+"' and password = '"+pass+"'");
             String answ=resultSet.getString("name");
+            stmt.close();
 
 
             return answ;
@@ -107,9 +110,9 @@ public class BaseAuthService implements AuthService {
     public void remove(String name) {
         try {
 
-
+            stmt=connection.createStatement();
             stmt.executeUpdate("DELETE FROM regions WHERE name = '" + name + "'");
-
+            stmt.close();
 
         }
         catch(Exception e) {
@@ -120,13 +123,13 @@ public class BaseAuthService implements AuthService {
     public void update(String what, String namewho, String namerg) {
         try {
 
-
+            stmt=connection.createStatement();
             String st="";
             if(what.equals("friends")){
                 st=String.format("UPDATE %s SET %s = '%s' WHERE %s = '%s'",namewho+":", namerg);
             }
             stmt.executeUpdate(st);
-
+            stmt.close();
 
         }
         catch(Exception e) {
