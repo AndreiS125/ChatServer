@@ -16,7 +16,6 @@ public class MyServer {
     public MyServer() {
         try (ServerSocket server = new ServerSocket(PORT)) {
             authService = new BaseAuthService();
-            authService.start();
             clients = new ArrayList<>();
             while (true) {
                 System.out.println("Сервер ожидает подключения");
@@ -71,9 +70,11 @@ public class MyServer {
             sb.append(o.getName() + " ");
         }
         broadcastMsg(sb.toString());
+        System.out.println("Забродкастил");
     }
     public synchronized void unsubscribe(ClientHandler o) {
         clients.remove(o);
+
         broadcastClientsList();
     }
     public synchronized void subscribe(ClientHandler o) {

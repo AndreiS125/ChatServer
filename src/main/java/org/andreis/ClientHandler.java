@@ -58,6 +58,28 @@ public class ClientHandler {
                     sendMsg("Неверные логин/пароль");
                 }
             }
+            if (str.startsWith("/reg")) {
+                String[] parts = str.split(" ");
+                String nick =
+                        null;
+                if (nick == null) {
+                    if (!myServer.isNickBusy(nick)) {
+                        sendMsg("/authok " +parts[2]);
+                        myServer.getAuthService().add(parts[2],parts[1], parts[3]);
+                        name = parts[2];
+                        myServer.broadcastMsg(name + " зашел в чат");
+                        myServer.subscribe(this);
+                        for(Message msg: History.readEnd()){
+                            sendMsg(msg.getNickwho()+": "+msg.getText());
+                        }
+                        return;
+                    } else {
+                        sendMsg("Учетная запись уже зарегестрирована");
+                    }
+                } else {
+                    sendMsg("Вы уже зарегестрированы. Войдите в аккаунт");
+                }
+            }
         }
     }
     public void readMessages() throws IOException {
@@ -78,6 +100,7 @@ public class ClientHandler {
             }
             else {
                 myServer.broadcastMsg(name + ": " + strFromClient);
+                History.wrtEnd(new Message(strFromClient, name));
             }
         }
     }
