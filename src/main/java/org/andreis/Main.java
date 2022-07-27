@@ -13,34 +13,8 @@ public class Main {
     static DataOutputStream out;
     public static void main(String[] args) {
 
-
-        try (ServerSocket serverSocket = new ServerSocket(8189)) {
-            System.out.println("Сервер запущен, ожидаем подключения...");
-            socket = serverSocket.accept();
-            System.out.println("Клиент подключился");
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-            while (true) {
-                String str = in.readUTF();
-                System.out.println(str);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        new Thread(() -> {
-            Scanner scan = new Scanner(System.in);
-            while (true) {
-
-                String msg = scan.nextLine();
-                System.out.println("SENDED MESSAGE");
-                try {
-                    out.writeUTF(msg);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        History.wrtEnd(new Message("Hello", "Andrei"));
+        System.out.println(History.readEnd());
 
     }
 }

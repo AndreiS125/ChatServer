@@ -101,7 +101,7 @@ public class BaseAuthService implements AuthService {
         }
         catch(Exception e) {
             e.printStackTrace();
-            return "";
+            return null;
         }
     }
 

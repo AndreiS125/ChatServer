@@ -69,6 +69,9 @@ public class ClientHandler {
                         name = parts[2];
                         myServer.broadcastMsg(name + " зашел в чат");
                         myServer.subscribe(this);
+                        for(Message msg: History.readEnd()){
+                            sendMsg(msg.getNickwho()+": "+msg.getText());
+                        }
                         return;
                     } else {
                         sendMsg("Учетная запись уже зарегестрирована");
@@ -97,6 +100,7 @@ public class ClientHandler {
             }
             else {
                 myServer.broadcastMsg(name + ": " + strFromClient);
+                History.wrtEnd(new Message(strFromClient, name));
             }
         }
     }
