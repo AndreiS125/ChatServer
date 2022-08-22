@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientHandler {
     private MyServer myServer;
+
+    private static final Logger LOGGER = Logger.getLogger("Server");
     private Socket socket;
     public DataInputStream in;
     public DataOutputStream out;
@@ -34,7 +38,7 @@ public class ClientHandler {
                 }
             }).start();
         } catch (IOException e) {
-            throw new RuntimeException("Проблемы при создании обработчика клиента");
+            LOGGER.log(Level.SEVERE, "Ошибка обработки данных клиента.");
         }
     }
     public void authentication() throws IOException {
@@ -49,6 +53,7 @@ public class ClientHandler {
                         sendMsg("/authok " + nick);
                         name = nick;
                         myServer.broadcastMsg(name + " зашел в чат");
+                        LOGGER.log(Level.INFO, "Пользователь подкючился");
                         myServer.subscribe(this);
                         return;
                     } else {
@@ -86,7 +91,7 @@ public class ClientHandler {
 
             out.writeUTF(msg);
 
-            System.out.println("Отправлено сообщение: "+msg);
+            LOGGER.info("Отправлено сообщение: "+msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

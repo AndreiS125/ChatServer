@@ -2,8 +2,12 @@ package org.andreis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 
 public class BaseAuthService implements AuthService {
+    private static final Logger LOGGER = Logger.getLogger("Server");
     private class Entry {
         private String login;
         private String pass;
@@ -17,11 +21,12 @@ public class BaseAuthService implements AuthService {
     private List<Entry> entries;
     @Override
     public void start() {
-        System.out.println("Сервис аутентификации запущен");
+
+        LOGGER.info("Сервис аутентификации запущен");
     }
     @Override
     public void stop() {
-        System.out.println("Сервис аутентификации остановлен");
+        LOGGER.info("Сервис аутентификации остановлен");
     }
     public BaseAuthService() {
         entries = new ArrayList<>();
@@ -31,7 +36,8 @@ public class BaseAuthService implements AuthService {
     }
     @Override
     public String getNickByLoginPass(String login, String pass) {
-        System.out.println("Поиск пользователя...");
+
+        LOGGER.info("Поиск пользователя...");
         for (Entry o : entries) {
             if (o.login.equals(login) && o.pass.equals(pass)) {
                 System.out.println("Пользователь найден...");
